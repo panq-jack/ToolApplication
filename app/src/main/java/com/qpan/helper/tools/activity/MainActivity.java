@@ -2,6 +2,7 @@ package com.qpan.helper.tools.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IntegerRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,BaseToolbarFragment.ToggleDrawerCallBack ,
         View.OnClickListener{
     private static final int DEFAULT_POSITION = 0;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     ImageView userPortrait;
     TextView userName;
     TextView userDesc;
+    Handler handler=new Handler();
 //    @InjectView(R.id.user_portrait)
 //
 //    @InjectView(R.id.user_name)
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity
                 int id = item.getItemId();
                 //两种方式：  打开fragment还是activity
                 if (id==R.id.nav_about){
-
+                    startActivity(new Intent(MainActivity.this,AboutActivity.class));
                 }else if (id==R.id.nav_logininfo){
 
                 }
@@ -149,8 +151,13 @@ public class MainActivity extends AppCompatActivity
         switch (id){
             case R.id.user_portrait:
             case R.id.user_name:
-                drawer.closeDrawer(GravityCompat.START);
                 startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        drawer.closeDrawer(GravityCompat.START);
+                    }
+                },500);
                break;
         }
     }
@@ -158,7 +165,7 @@ public class MainActivity extends AppCompatActivity
     private void doubleClickToExit(){
         long time=System.currentTimeMillis();
         if (time-lastBackClickTime>2*1000){
-            Toast.makeText(MainActivity.this,"再次点击以退出",Toast.LENGTH_SHORT).show();
+            showSnackBar("再次点击以退出");
             lastBackClickTime=time;
         }else {
             super.onBackPressed();

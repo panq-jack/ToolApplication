@@ -17,8 +17,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    //加载 lib下的。so
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
     repositories {
         maven { url "https://jitpack.io" }      //加载github资源
+    }
+    task nativeLibsToJar(type: Zip, description: "create a jar archive of the native libs") {
+        destinationDir file("$projectDir/libs")
+        baseName "Native_Libs2"
+        extension "jar"
+        from fileTree(dir: "libs", include: "**/*.so")
+        into "lib"
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn(nativeLibsToJar)
     }
 }
 
@@ -28,10 +45,15 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+//    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.mcxiaoke.volley:library-aar:1.0.1'
+//    compile 'com.mcxiaoke.volley:library-aar:1.0.1'
     compile 'com.github.Aspsine:FragmentNavigator:1.0.2'
     compile project(':library')
     compile files('libs/butterknife-6.1.0.jar')
+    //bmob 3.4.7依赖okhttp3（3.2.0）、okio（1.7.0）及libbmob.so库；
+    compile files('libs/Bmob_Push_V0.9beta_20160520.jar')
+    compile files('libs/okhttp-3.2.0.jar')
+    compile files('libs/okio-1.7.0.jar')
+    compile files('libs/BmobSDK_V3.4.7_0527.jar')
 }
